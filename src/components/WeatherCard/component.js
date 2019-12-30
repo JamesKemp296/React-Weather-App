@@ -41,7 +41,7 @@ const WeatherCard = props => {
   return (
     <Card>
       <Location />
-      <Icon />
+      <Icon condition={props.condition} />
       <Condition />
     </Card>
   )
