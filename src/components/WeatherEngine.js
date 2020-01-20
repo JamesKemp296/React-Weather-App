@@ -6,12 +6,13 @@ const WeatherEngine = ({ location }) => {
   const [query, setQuery] = useState('')
   const [unit, setUnit] = useState('metric')
   const [weather, setWeather] = useState({
-    temp: null,
+    ctemp: null,
+    ftemp: null,
     city: null,
     condition: null,
     country: null
   })
-  const { temp, condition, country, city } = weather
+  const { ctemp, ftemp, condition, country, city } = weather
 
   const getWeather = async q => {
     const apiRes = await fetch(
@@ -19,7 +20,8 @@ const WeatherEngine = ({ location }) => {
     )
     const resJSON = await apiRes.json()
     setWeather({
-      temp: Math.round(resJSON.main.temp),
+      ftemp: Math.round((resJSON.main.temp * 9) / 5 + 32),
+      ctemp: Math.round(resJSON.main.temp),
       city: resJSON.name,
       condition: resJSON.weather[0].main,
       country: resJSON.sys.country
@@ -34,14 +36,6 @@ const WeatherEngine = ({ location }) => {
   }, [location])
   const handleUnitChange = () => {
     unit === 'imperial' ? setUnit('metric') : setUnit('imperial')
-    let unitTemp = ''
-    if (unit === 'imperial') {
-      unitTemp = ((temp - 32) * 5) / 9
-      setWeather({ ...weather, temp: Math.round(unitTemp) })
-    } else {
-      unitTemp = (temp * 9) / 5 + 32
-      setWeather({ ...weather, temp: Math.round(unitTemp) })
-    }
   }
 
   return (
@@ -50,7 +44,8 @@ const WeatherEngine = ({ location }) => {
         unit={unit}
         handleUnitChange={handleUnitChange}
         setUnit={setUnit}
-        temp={temp}
+        ctemp={ctemp}
+        ftemp={ftemp}
         condition={condition}
         city={city}
         country={country}
