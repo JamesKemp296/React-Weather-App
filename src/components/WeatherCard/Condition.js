@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 
-const Condition = ({ temp, condition }) => {
+const Condition = ({ ctemp, ftemp, condition, unit, handleUnitChange }) => {
   const Temp = styled.h1`
     font-family: 'Fira Sans', sans-serif;
     font-size: 2rem;
@@ -15,7 +15,9 @@ const Condition = ({ temp, condition }) => {
 
   return (
     <>
-      <Temp>{temp} °C</Temp>
+      <Temp onClick={handleUnitChange}>
+        {unit === 'imperial' ? `${ftemp} °F` : `${ctemp} °C`}
+      </Temp>
       <State>{condition}</State>
     </>
   )
