@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import WeatherCard from './components/WeatherCard/component'
 import './App.css'
 
 function App() {
-  const [query, setQuery] = useState('london, gb')
-  const [city, setCity] = useState('')
+  const [query, setQuery] = useState('miami, us')
   const [unit, setUnit] = useState('metric')
-  const [temp, setTemp] = useState('')
-  const [condition, setCondition] = useState('')
-  const [country, setCountry] = useState('')
+  const [weather, setWeather] = useState({
+    temp: null,
+    city: null,
+    condition: null,
+    country: null
+  })
+  const { temp, condition, country, city } = weather
 
   const data = async q => {
     const apiRes = await fetch(
@@ -20,21 +23,33 @@ function App() {
   const handleSearch = e => {
     e.preventDefault()
     data(query).then(res => {
-      setTemp(Math.floor(res.main.temp))
-      setCondition(res.weather[0].main)
-      setCountry(res.sys.country)
-      setCity(res.name)
+      setWeather({
+        temp: Math.round(res.main.temp),
+        city: res.name,
+        condition: res.weather[0].main,
+        country: res.sys.country
+      })
     })
   }
+  useEffect(() => {
+    data(query).then(res => {
+      setWeather({
+        temp: Math.round(res.main.temp),
+        city: res.name,
+        condition: res.weather[0].main,
+        country: res.sys.country
+      })
+    })
+  }, [])
   const handleUnitChange = () => {
     unit === 'imperial' ? setUnit('metric') : setUnit('imperial')
     let unitTemp = ''
     if (unit === 'imperial') {
       unitTemp = ((temp - 32) * 5) / 9
-      setTemp(Math.floor(unitTemp))
+      setWeather({ ...weather, temp: Math.round(unitTemp) })
     } else {
       unitTemp = (temp * 9) / 5 + 32
-      setTemp(Math.floor(unitTemp))
+      setWeather({ ...weather, temp: Math.round(unitTemp) })
     }
   }
   return (
